@@ -42,3 +42,25 @@ class DictItem(BaseModel):
 
     def __str__(self):
         return f"{self.type}:{self.name}"
+
+
+class UserApplication(models.Model):
+    name = models.CharField(max_length=100, verbose_name="申请用户名")
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="手机号")
+    dept = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="申请部门")
+    roles = models.ManyToManyField('Role', blank=True, verbose_name="申请角色")
+    password = models.CharField(max_length=128, verbose_name="密码")
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', '待审核'),
+            ('approved', '已通过'),
+            ('rejected', '已拒绝'),
+        ],
+        default='pending',
+        verbose_name="申请状态"
+    )
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="申请时间")
+
+    def __str__(self):
+        return f"{self.name} ({self.get_status_display()})"

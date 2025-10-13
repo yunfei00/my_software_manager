@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .accounts import accounts_views
 
 app_name = 'system'
 
@@ -27,6 +28,13 @@ urlpatterns = [
     path('dict/create/', views.DictCreateView.as_view(), name='dict_create'),
     path('dict/<int:pk>/edit/', views.DictUpdateView.as_view(), name='dict_edit'),
 
-path('dict/<int:pk>/delete/', views.DictDeleteView.as_view(), name='dict_delete'),
+    path('dict/<int:pk>/delete/', views.DictDeleteView.as_view(), name='dict_delete'),
     # path('dict/bulk-delete/', views.DictBulkDeleteView.as_view(), name='dict_bulk_delete'),
+
+    path('register/', accounts_views.register_view, name='register'),
+    path('login/', accounts_views.login_view, name='login'),
+    path('logout/', accounts_views.logout_view, name='logout'),
+    path('applications/', accounts_views.application_list, name='application_list'),
+    path('applications/approve/<int:app_id>/', accounts_views.approve_application, name='approve_application'),
+    path('applications/reject/<int:app_id>/', accounts_views.reject_application, name='reject_application'),
 ]
