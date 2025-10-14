@@ -37,4 +37,5 @@ urlpatterns = [
     path('applications/', accounts_views.application_list, name='application_list'),
     path('applications/approve/<int:app_id>/', accounts_views.approve_application, name='approve_application'),
     path('applications/reject/<int:app_id>/', accounts_views.reject_application, name='reject_application'),
+    path("", views.dashboard, name="dashboard"),
 ]

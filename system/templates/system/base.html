@@ -1,0 +1,163 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}镜像管理系统{% endblock %}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body { min-height: 100vh; overflow-x: hidden; }
+    #sidebar { min-width: 220px; max-width: 260px; }
+    #content { flex: 1; }
+    .nav-link.active { font-weight: 600; }
+    body { padding-top: 56px; } /* 给顶部导航留空间 */
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- 🔹 顶部导航条 -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light me-2" id="btn-toggle-sidebar">☰</button>
+      <a class="navbar-brand fw-bold" href="{% url 'system:dashboard' %}">镜像管理系统</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="#">{{ user.get_full_name|default:user.username }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'system:logout' %}">退出</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'system:login' %}">登录</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 🔹 页面主体 -->
+  <div class="d-flex" style="margin-top:56px;">
+    <!-- 左侧导航 -->
+    <aside id="sidebar" class="bg-light border-end vh-100 p-3">
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link" href="{% url 'system:dashboard' %}">仪表盘</a></li>
+{#<p>user_role: '{{ user_role }}'</p>#}
+{#          {% if user_role == "超级管理员" %}#}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">系统管理</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'system:user_list' %}">用户管理</a></li>
+            <li><a class="dropdown-item" href="{% url 'system:dept_list' %}">部门管理</a></li>
+            <li><a class="dropdown-item" href="{% url 'system:role_list' %}">角色管理</a></li>
+            <li><a class="dropdown-item" href="{% url 'system:dict_list' %}">字典管理</a></li>
+          </ul>
+        </li>
+{#              {% else %}#}
+{#                  <li class="nav-item text-muted small">当前角色：{{ user_role|default:"未分配" }}</li>#}
+{#<p>你不是超级管理员，菜单不显示</p>#}
+{#          {% endif %}#}
+
+        <li class="nav-item"><a class="nav-link" href="/projects/">项目管理</a></li>
+        <li class="nav-item"><a class="nav-link" href="/images/">镜像管理</a></li>
+        <li class="nav-item"><a class="nav-link" href="/detection/">检测管理</a></li>
+        <li class="nav-item"><a class="nav-link" href="/repo/">仓库管理</a></li>
+
+        <li class="nav-item"><hr></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/">后台管理</a></li>
+      </ul>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main id="content" class="p-4 flex-grow-1">
+      <div class="container-fluid">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- 🔹 通用 Modal -->
+  <div class="modal fade" id="commonModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commonModalLabel">表单</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="commonModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 JS功能 -->
+  <script>
+    // 侧边栏切换
+    const btn = document.getElementById('btn-toggle-sidebar');
+    const sidebar = document.getElementById('sidebar');
+    btn?.addEventListener('click', () => {
+      sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // ---------- 打开 Modal ----------
+    async function openModal(url, title='表单') {
+      const modalTitle = document.getElementById('commonModalLabel');
+      const modalBody = document.getElementById('commonModalBody');
+      modalTitle.innerText = title;
+      modalBody.innerHTML = '<div class="text-center p-3">加载中...</div>';
+      const modal = new bootstrap.Modal(document.getElementById('commonModal'));
+      modal.show();
+
+      try {
+        const resp = await fetch(url, {credentials: 'same-origin'});
+        const data = await resp.json();
+        modalBody.innerHTML = data.html;
+      } catch {
+        modalBody.innerHTML = '<div class="text-danger text-center p-3">加载失败，请稍后重试。</div>';
+      }
+    }
+
+    // ---------- 提交 Modal 表单 ----------
+    let submitting = false;
+    async function submitModalForm(form, event) {
+      if (event) event.preventDefault();
+      if (submitting) return false;
+      submitting = true;
+
+      try {
+        const resp = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          credentials: 'same-origin',
+          headers: {'X-CSRFToken': getCookie('csrftoken')}
+        });
+        const data = await resp.json();
+        if (data.success) location.reload();
+        else document.getElementById('commonModalBody').innerHTML = data.html;
+      } catch {
+        alert('提交失败，请检查网络或稍后再试。');
+      }
+
+      submitting = false;
+      return false;
+    }
+
+    // ---------- 获取 CSRF ----------
+    function getCookie(name) {
+      const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+      return v ? v.pop() : '';
+    }
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

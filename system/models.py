@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class BaseModel(models.Model):
@@ -13,11 +14,16 @@ class BaseModel(models.Model):
         abstract = True
 
 class Department(BaseModel):
-    name = models.CharField(max_length=100, verbose_name="部门名称")
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, verbose_name="上级部门")
+    name = models.CharField(max_length=64, verbose_name="部门名称")
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="上级部门")
+
+    class Meta:
+        verbose_name = "部门管理"
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.name
+
 
 class Role(BaseModel):
     name = models.CharField(max_length=100, verbose_name="角色名称")
@@ -26,14 +32,19 @@ class Role(BaseModel):
     def __str__(self):
         return self.name
 
-class User(BaseModel):
+class User(AbstractUser, BaseModel):
     name = models.CharField(max_length=100, verbose_name="用户名称")
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="手机号")
     dept = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="所属部门")
     roles = models.ManyToManyField(Role, blank=True, verbose_name="角色")
 
+    class Meta:
+        verbose_name = "用户"
+        verbose_name_plural = "用户管理"
+
     def __str__(self):
         return self.name
+
 
 class DictItem(BaseModel):
     name = models.CharField(max_length=100, verbose_name="字典名称")

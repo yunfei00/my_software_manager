@@ -1,0 +1,2 @@
+ 测试命令
+ python manage.py test system.tests.test_department

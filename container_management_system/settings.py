@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-from apps import system
+import system
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
-    "apps.system",
+    "system",
+    "images.apps.ImagesConfig",
+    "projects.apps.ProjectsConfig",
+    "detection.apps.DetectionConfig",
+    "repo.apps.RepoConfig",
 ]
 
 MIDDLEWARE = [
@@ -66,6 +70,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'system.context_processors.user_role',  # 添加这里
             ],
         },
     },
@@ -122,10 +127,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # AUTH_USER_MODEL = 'system.User'
+
+# 静态文件
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]   # 前端资源放在项目根 static/
+STATIC_ROOT = BASE_DIR / "staticfiles"     # collectstatic 输出（生产环境）
+
+# 媒体文件（如果需要）
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# 自定义用户模型（必须在第一次迁移前设置）
+AUTH_USER_MODEL = "system.User"
+
+# 登录/登出跳转
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "dashboard"
+
+# LOGIN_REDIRECT_URL = '/'  # 登录后跳转首页
+LOGOUT_REDIRECT_URL = '/login/'
