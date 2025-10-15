@@ -11,22 +11,22 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
-    body { 
-      min-height: 100vh; 
-      overflow-x: hidden; 
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
       padding-top: 56px; /* 给顶部导航留空间 */
     }
-    #sidebar { 
-      min-width: 220px; 
-      max-width: 260px; 
+    #sidebar {
+      min-width: 220px;
+      max-width: 260px;
       transition: all 0.3s ease;
     }
-    #content { 
-      flex: 1; 
+    #content {
+      flex: 1;
       padding: 1.5rem;
     }
-    .nav-link.active { 
-      font-weight: 600; 
+    .nav-link.active {
+      font-weight: 600;
       background-color: rgba(0,0,0,0.1);
     }
     .dropdown-item.active {
@@ -67,33 +67,51 @@
     <!-- 左侧导航 -->
     <aside id="sidebar" class="bg-light border-end vh-100 p-3">
       <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
           href="{% url 'system:dashboard' %}">仪表盘</a></li>
           {% if is_admin %}
- 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle {% if 'system' in request.path %}active{% endif %}" 
-               data-bs-toggle="dropdown" href="#">系统管理</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}" 
-                href="{% url 'system:user_list' %}">用户管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dept_list' %}active{% endif %}" 
-                href="{% url 'system:dept_list' %}">部门管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'role_list' %}active{% endif %}" 
-                href="{% url 'system:role_list' %}">角色管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}" 
-                href="{% url 'system:dict_list' %}">字典管理</a></li>
-            </ul>
-          </li>
+
+         <li class="nav-item">
+  <a id="systemToggle" class="nav-link d-flex justify-content-between align-items-center {% if 'system' in request.path %}active{% endif %}"
+     href="#systemMenu"
+     role="button"
+     aria-expanded="{% if 'system' in request.path %}true{% else %}false{% endif %}"
+     aria-controls="systemMenu"
+     >
+    <span>系统管理</span>
+    <span class="small text-muted">{% if 'system' in request.path %}▾{% else %}▸{% endif %}</span>
+  </a>
+
+  <div class="collapse {% if 'system' in request.path %}show{% endif %}" id="systemMenu">
+    <ul class="nav flex-column ms-3 mt-1">
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}"
+           href="{% url 'system:user_list' %}">用户管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'dept_list' %}active{% endif %}"
+           href="{% url 'system:dept_list' %}">部门管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'role_list' %}active{% endif %}"
+           href="{% url 'system:role_list' %}">角色管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}"
+           href="{% url 'system:dict_list' %}">字典管理</a>
+      </li>
+    </ul>
+  </div>
+</li>
         {% endif %}
 
-        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}"
+        <li class="nav-item"><a class="nav-link {% if '/projects/' in request.path %}active{% endif %}"
           href="/projects/">项目管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}"
           href="/images/">镜像管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/detection/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/detection/' in request.path %}active{% endif %}"
           href="/detection/">检测管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/repo/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/repo/' in request.path %}active{% endif %}"
           href="/repo/">仓库管理</a></li>
 {% if is_admin %}
         <li class="nav-item"><hr></li>
@@ -128,7 +146,7 @@
     // 侧边栏切换（支持页面刷新后保持状态）
     const btn = document.getElementById('btn-toggle-sidebar');
     const sidebar = document.getElementById('sidebar');
-    
+
     // 初始化侧边栏状态
     if (localStorage.getItem('sidebarHidden') === 'true') {
       sidebar.style.display = 'none';
@@ -146,14 +164,14 @@
       const modalBody = document.getElementById('commonModalBody');
       modalTitle.innerText = title;
       modalBody.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">加载中...</span></div></div>';
-      
+
       const modal = new bootstrap.Modal(document.getElementById('commonModal'));
       modal.show();
 
       try {
         const resp = await fetch(url, {credentials: 'same-origin'});
         if (!resp.ok) throw new Error('网络请求失败');
-        
+
         const data = await resp.json();
         modalBody.innerHTML = data.html || '<div class="text-warning text-center p-3">无内容</div>';
       } catch (err) {
@@ -218,6 +236,70 @@
       const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
       return v ? v.pop() : '';
     }
+
+    // ---------- 保持“系统管理”折叠菜单展开状态（点击子链接后不收起） ----------
+    (function() {
+      const storageKey = 'systemMenuOpen';
+      const systemMenu = document.getElementById('systemMenu');
+      const systemToggle = document.getElementById('systemToggle');
+
+      function updateToggleIcon(open) {
+        try {
+          const iconSpan = systemToggle.querySelector('span.small');
+          if (iconSpan) iconSpan.innerText = open ? '▾' : '▸';
+          systemToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        } catch (e) { /* ignore */ }
+      }
+
+      function setSystemMenuOpen(open) {
+        if (!systemMenu || !systemToggle) return;
+        if (open) {
+          systemMenu.classList.add('show');
+        } else {
+          systemMenu.classList.remove('show');
+        }
+        updateToggleIcon(open);
+        localStorage.setItem(storageKey, open ? 'true' : 'false');
+      }
+
+     // 点击折叠菜单标题：切换展开状态 + 若当前不在system下则跳转用户管理
+if (systemToggle && systemMenu) {
+  systemToggle.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    const willOpen = !systemMenu.classList.contains('show');
+    setSystemMenuOpen(willOpen);
+
+    // 🔹 如果当前URL不包含 '/system/'（即不在系统管理任一子页），则跳转到用户管理
+    const currentPath = window.location.pathname;
+    if (!currentPath.includes('/system/')) {
+      // 页面跳转到用户管理
+      window.location.href = "{% url 'system:user_list' %}";
+    }
+  });
+
+  // 当点击折叠菜单内的子链接时，记录“应保持展开”的状态（不阻止导航）
+  const innerLinks = systemMenu.querySelectorAll('a.nav-link');
+  innerLinks.forEach(a => {
+    a.addEventListener('click', function() {
+      localStorage.setItem(storageKey, 'true');
+    });
+  });
+}
+
+      // 页面加载时，优先使用 localStorage 的值（如果存在）决定展开状态；否则保持服务端渲染的状态
+      try {
+        const stored = localStorage.getItem(storageKey);
+        if (stored === 'true') {
+          setSystemMenuOpen(true);
+        } else if (stored === 'false') {
+          setSystemMenuOpen(false);
+        }
+      } catch (e) {
+        // 可能在无痕/受限环境下抛错，忽略并保持服务端渲染结果
+        console.warn('localStorage not available for systemMenu state');
+      }
+    })();
   </script>
 
   {% block extra_scripts %}{% endblock %}

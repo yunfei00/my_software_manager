@@ -67,33 +67,51 @@
     <!-- 左侧导航 -->
     <aside id="sidebar" class="bg-light border-end vh-100 p-3">
       <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
           href="{% url 'system:dashboard' %}">仪表盘</a></li>
           {% if is_admin %}
- 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle {% if 'system' in request.path %}active{% endif %}" 
-               data-bs-toggle="dropdown" href="#">系统管理</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}" 
-                href="{% url 'system:user_list' %}">用户管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dept_list' %}active{% endif %}" 
-                href="{% url 'system:dept_list' %}">部门管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'role_list' %}active{% endif %}" 
-                href="{% url 'system:role_list' %}">角色管理</a></li>
-              <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}" 
-                href="{% url 'system:dict_list' %}">字典管理</a></li>
-            </ul>
-          </li>
+
+         <li class="nav-item">
+  <a class="nav-link d-flex justify-content-between align-items-center {% if 'system' in request.path %}active{% endif %}"
+     href="#systemMenu"
+     data-bs-toggle="collapse"
+     role="button"
+     aria-expanded="{% if 'system' in request.path %}true{% else %}false{% endif %}"
+     aria-controls="systemMenu">
+    <span>系统管理</span>
+    <span class="small text-muted">{% if 'system' in request.path %}▾{% else %}▸{% endif %}</span>
+  </a>
+
+  <div class="collapse {% if 'system' in request.path %}show{% endif %}" id="systemMenu">
+    <ul class="nav flex-column ms-3 mt-1">
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}"
+           href="{% url 'system:user_list' %}">用户管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'dept_list' %}active{% endif %}"
+           href="{% url 'system:dept_list' %}">部门管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'role_list' %}active{% endif %}"
+           href="{% url 'system:role_list' %}">角色管理</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}"
+           href="{% url 'system:dict_list' %}">字典管理</a>
+      </li>
+    </ul>
+  </div>
+</li>
         {% endif %}
 
-        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}"
+        <li class="nav-item"><a class="nav-link {% if '/projects/' in request.path %}active{% endif %}" 
           href="/projects/">项目管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/images/' in request.path %}active{% endif %}"
           href="/images/">镜像管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/detection/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/detection/' in request.path %}active{% endif %}"
           href="/detection/">检测管理</a></li>
-        <li class="nav-item"><a class="nav-link {% if '/repo/' in request.path %}active{% endif %}" 
+        <li class="nav-item"><a class="nav-link {% if '/repo/' in request.path %}active{% endif %}"
           href="/repo/">仓库管理</a></li>
 {% if is_admin %}
         <li class="nav-item"><hr></li>
@@ -128,7 +146,7 @@
     // 侧边栏切换（支持页面刷新后保持状态）
     const btn = document.getElementById('btn-toggle-sidebar');
     const sidebar = document.getElementById('sidebar');
-    
+
     // 初始化侧边栏状态
     if (localStorage.getItem('sidebarHidden') === 'true') {
       sidebar.style.display = 'none';
