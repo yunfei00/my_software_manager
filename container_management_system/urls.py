@@ -1,5 +1,5 @@
 """
-URL configuration for container_management_system project.
+URL configuration for container_management_system projects.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/

@@ -1,5 +1,5 @@
 """
-ASGI config for container_management_system project.
+ASGI config for container_management_system projects.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
