@@ -53,6 +53,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'system.middleware.login_required_middleware.LoginRequiredMiddleware',
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -150,3 +151,6 @@ LOGIN_REDIRECT_URL = "dashboard"
 
 # LOGIN_REDIRECT_URL = '/'  # 登录后跳转首页
 LOGOUT_REDIRECT_URL = '/login/'
+
+LOGIN_WHITELIST_NAMES = ['login', 'logout', 'register']
+LOGIN_WHITELIST_PATHS = ['/health/', '/api/public/']
