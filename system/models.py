@@ -35,6 +35,7 @@ class Role(BaseModel):
 class User(AbstractUser, BaseModel):
     name = models.CharField(max_length=100, verbose_name="用户名称")
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="手机号")
+    company = models.CharField(max_length=200, blank=True, null=True, verbose_name="公司名称")  # ← 新增字段
     dept = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="所属部门")
     roles = models.ManyToManyField(Role, blank=True, verbose_name="角色")
 

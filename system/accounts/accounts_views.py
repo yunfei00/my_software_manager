@@ -16,6 +16,7 @@ def register_view(request):
     if request.method == "POST":
         name = request.POST.get("username")
         phone = request.POST.get("phone")
+        company = request.POST.get("company")  # 新增字段
         dept_id = request.POST.get("dept")
         role_id = request.POST.get("role")   # 单选角色
         password = request.POST.get("password")
@@ -25,6 +26,7 @@ def register_view(request):
         context = {
             "username": name,
             "phone": phone,
+            "company": company,  # 保存公司名称
             "dept_id": int(dept_id) if dept_id else None,
             "role_ids": [int(role_id)] if role_id else [],
             "depts": depts,
@@ -49,6 +51,7 @@ def register_view(request):
             username=name,
             name=name,
             phone=phone,
+            company=company,  # 保存公司名称
             dept=dept,
             password=password,
             status=0,

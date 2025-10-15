@@ -13,4 +13,8 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets + (
         ("额外信息", {"fields": ("phone", "dept")}),
     )
-    list_display = ("name", "phone", "phone", "dept")
+    list_display = ("name", "phone", "get_roles", "dept", "company", "status")
+
+    def get_roles(self, obj):
+        return ", ".join([role.name for role in obj.roles.all()])
+    get_roles.short_description = "角色"

@@ -122,8 +122,18 @@ class UserListView(View):
         qs = f.qs.order_by('-id')
         paginator = Paginator(qs, 10)
         objs = paginator.get_page(request.GET.get('page'))
+        # ✅ 打印所有用户信息（分页后的）
+        print("=== 用户列表调试输出 ===")
+        for u in objs:
+            role_names = ", ".join([r.name for r in u.roles.all()]) or "无角色"
+            dept_name = u.dept.name if u.dept else "无部门"
+            status_display = u.get_status_display() if hasattr(u, 'get_status_display') else u.status
+            print(f"ID: {u.id} | 用户名: {u.username} | 姓名: {u.name} | 公司: {u.company or '无'} | "
+                  f"部门: {dept_name} | 角色: {role_names} | 状态: {status_display}")
+        print("=======================")
+
         if 'export' in request.GET:
-            cols = [('id','ID'), ('name','用户名称'), ('phone','手机号'), ('dept','部门'), ('roles','角色'), ('status','状态')]
+            cols = [('id','ID'), ('name','用户名称'), ('phone','手机号'), ('company','公司'),('dept','部门'), ('roles','角色'), ('status','状态')]
             return export_queryset_to_excel(f.qs, cols, 'users')
 
         return render(request, 'system/user_list.html', {'filter': f, 'page_obj': objs})

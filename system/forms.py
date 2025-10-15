@@ -14,7 +14,7 @@ class RoleForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['name', 'phone', 'dept', 'roles', 'status']
+        fields = ['name', 'phone', 'company', 'dept', 'roles', 'status']
         widgets = {'roles': forms.CheckboxSelectMultiple()}
 
 class DictForm(forms.ModelForm):
