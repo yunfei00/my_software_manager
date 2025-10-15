@@ -59,7 +59,7 @@ from .forms import ProjectForm
 #     return render(request, "projects/delete.html", {"projects": project})
 
 
-
+@login_required
 def project_list(request):
     projects = Project.objects.all()
     return render(request, 'projects/project_list.html', {'projects': projects})

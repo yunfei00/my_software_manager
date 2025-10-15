@@ -1,15 +1,18 @@
-def user_role(request):
-    """
-    全局传递用户角色给模板
-    """
-    role_name = None
-    # user = getattr(request, "user", None)
-    # if user and user.is_authenticated:
-    #     if hasattr(user, "roles") and user.roles:
-    #         print(f'fuck user.roles.name is {user.roles.name}')
-    #         role_name = user.roles.name.strip()  # 去掉前后空格
-    #         # user = User.objects.get(username=user)
-    #         # user_role = user.roles.first()  # 返回 Role 对象 或 None
+# system/context_processors.py
+from system.models import User
 
-    print(f'user_role is {user_role}')
-    return {"user_role": role_name}
+
+def user_role(request):
+    """让模板中能直接访问 user_roles"""
+    user = request.user
+    user_role = None
+    if request.user.is_authenticated:
+        user = User.objects.get(username=user)
+        user_role = user.roles.first()  # 返回 Role 对象 或 None
+        user_role = str(user_role)
+
+    is_admin = user_role == '超级管理员'
+    return {
+        'user_role': user_role,
+        'is_admin': is_admin,  # 方便模板中直接 {{ current_user.name }}
+    }
