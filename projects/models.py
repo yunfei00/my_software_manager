@@ -36,15 +36,23 @@ class Project(models.Model):
         ('closed', '关闭'),
     ]
 
+    TMP_IMG = [
+        ('system', '操作系统'),
+        ('middle', '中间件'),
+        ('jdk', 'JDK版本'),
+    ]
+
     name = models.CharField(max_length=200, verbose_name="项目名称")
     project_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name="项目ID")
-    business_department = models.ForeignKey(BusinessDepartment, on_delete=models.SET_NULL, null=True,
+    business_department = models.ForeignKey('system.Department', on_delete=models.SET_NULL, null=True,
                                             verbose_name="业务部门")
     final_user = models.CharField(max_length=200, verbose_name="最终用户")
     description = models.TextField(blank=True, null=True, verbose_name="项目描述")
     expected_launch = models.DateField(default=timezone.now, verbose_name="预计上线时间")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name="状态")
-    base_image = models.ForeignKey(BaseImage, on_delete=models.SET_NULL, null=True, verbose_name="基础镜像版本")
+    status = models.CharField(max_length=20, choices=TMP_IMG, default='system', verbose_name="状态")
+    # base_image = models.ForeignKey(BaseImage, on_delete=models.SET_NULL, null=True, verbose_name="基础镜像版本")
+    base_image = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', null=True, verbose_name="基础镜像版本")
+
     components = models.ManyToManyField(Component, blank=True, verbose_name="其他组件")
 
     class Meta:

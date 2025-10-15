@@ -69,7 +69,7 @@ def project_create(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('project_list')
+            return redirect('projects:project_list')
     else:
         form = ProjectForm()
     return render(request, 'projects/project_form.html', {'form': form, 'title': '创建项目'})
@@ -80,7 +80,7 @@ def project_edit(request, pk):
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            return redirect('project_list')
+            return redirect('projects:project_list')
     else:
         form = ProjectForm(instance=project)
     return render(request, 'projects/project_form.html', {'form': form, 'title': '编辑项目'})
