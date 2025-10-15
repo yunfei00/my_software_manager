@@ -52,8 +52,7 @@
     <aside id="sidebar" class="bg-light border-end vh-100 p-3">
       <ul class="nav nav-pills flex-column">
         <li class="nav-item"><a class="nav-link" href="{% url 'system:dashboard' %}">仪表盘</a></li>
-{#<p>user_role: '{{ user_role }}'</p>#}
-{#          {% if user_role == "超级管理员" %}#}
+          {% if is_admin %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">系统管理</a>
           <ul class="dropdown-menu">
@@ -63,18 +62,16 @@
             <li><a class="dropdown-item" href="{% url 'system:dict_list' %}">字典管理</a></li>
           </ul>
         </li>
-{#              {% else %}#}
-{#                  <li class="nav-item text-muted small">当前角色：{{ user_role|default:"未分配" }}</li>#}
-{#<p>你不是超级管理员，菜单不显示</p>#}
-{#          {% endif %}#}
+          {% endif %}
 
         <li class="nav-item"><a class="nav-link" href="/projects/">项目管理</a></li>
         <li class="nav-item"><a class="nav-link" href="/images/">镜像管理</a></li>
         <li class="nav-item"><a class="nav-link" href="/detection/">检测管理</a></li>
         <li class="nav-item"><a class="nav-link" href="/repo/">仓库管理</a></li>
-
+{% if is_admin %}
         <li class="nav-item"><hr></li>
         <li class="nav-item"><a class="nav-link" href="/admin/">后台管理</a></li>
+      {% endif %}
       </ul>
     </aside>
 

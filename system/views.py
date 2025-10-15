@@ -227,7 +227,6 @@ class DictBulkDeleteView(View):
 @login_required
 def dashboard(request):
     # 后续注入统计数据、快捷入口等
-    print(f'request.user is {request.user}')
 
     # 查询角色
     user = request.user
@@ -235,6 +234,8 @@ def dashboard(request):
     if request.user.is_authenticated:
         user = User.objects.get(username=user)
         user_role = user.roles.first()  # 返回 Role 对象 或 None
+        user_role = str(user_role)
 
-    print(f'user_role is {user_role}')
-    return render(request, "system/accounts/dashboard.html", {"user_role": user_role})
+    is_admin = user_role == '超级管理员'
+    return render(request, "system/accounts/dashboard.html",
+                  {"user_role": user_role, 'is_admin': is_admin})

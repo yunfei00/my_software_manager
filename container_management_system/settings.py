@@ -131,7 +131,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-# AUTH_USER_MODEL = 'system.User'
 
 # 静态文件
 STATIC_URL = "/static/"
@@ -146,7 +145,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 AUTH_USER_MODEL = "system.User"
 
 # 登录/登出跳转
-LOGIN_URL = "login"
+LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "dashboard"
 
 # LOGIN_REDIRECT_URL = '/'  # 登录后跳转首页
