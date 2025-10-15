@@ -4,4 +4,6 @@ from . import views
 app_name = 'repo'
 
 urlpatterns = [
+    path('', views.project_list, name='project_list'),
 ]
+
