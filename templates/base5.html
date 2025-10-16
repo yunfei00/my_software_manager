@@ -283,19 +283,19 @@
     <ul class="nav flex-column ms-3 mt-1">
       <li class="nav-item">
         <a class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}"
-           href="{% url 'system:user_list' %}"><i class="bi bi-people me-2"></i>用户管理</a>
+           href="{% url 'system:user_list' %}">用户管理</a>
       </li>
       <li class="nav-item">
         <a class="nav-link {% if request.resolver_match.url_name == 'dept_list' %}active{% endif %}"
-           href="{% url 'system:dept_list' %}"><i class="bi bi-diagram-3 me-2"></i>部门管理</a>
+           href="{% url 'system:dept_list' %}">部门管理</a>
       </li>
       <li class="nav-item">
         <a class="nav-link {% if request.resolver_match.url_name == 'role_list' %}active{% endif %}"
-           href="{% url 'system:role_list' %}"><i class="bi bi-person-gear me-2"></i>角色管理</a>
+           href="{% url 'system:role_list' %}">角色管理</a>
       </li>
       <li class="nav-item">
         <a class="nav-link {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}"
-           href="{% url 'system:dict_list' %}"><i class="bi bi-book me-2"></i>字典管理</a>
+           href="{% url 'system:dict_list' %}">字典管理</a>
       </li>
     </ul>
   </div>
