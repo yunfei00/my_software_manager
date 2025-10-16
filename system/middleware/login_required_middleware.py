@@ -8,8 +8,9 @@ DEFAULT_WHITELIST_PREFIXES = [
     '/media/',
     '/admin/',
     '/favicon.ico',
-    '/login',
-    '/logout'
+    '/login/',
+    '/logout/',
+    '/register/',
 ]
 
 class LoginRequiredMiddleware:
@@ -37,9 +38,12 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         path = request.path
+        print('current request path:', path)
         # ['/static/', '/media/', '/admin/', '/favicon.ico', '/login', '/logout', '/health/', '/api/public/']
         # 1) 如果路径以任何白名单前缀开始 => 放行
+        # print('whitelist path:', self.whitelist)
         if any(path.startswith(p) for p in self.whitelist):
+            # print('not whitelisted path:', path)
             return self.get_response(request)
 
         # 2) 未登录则重定向（并带 next 参数）
