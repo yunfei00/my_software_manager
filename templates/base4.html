@@ -449,24 +449,26 @@
       return v ? v.pop() : '';
     }
 
-    // ---------- systemMenu 折叠菜单持久化（增强版） ----------
+    // ---------- systemMenu 折叠菜单持久化（新增） ----------
     (function(){
       const systemMenu = document.getElementById('systemMenu');
       const systemToggle = document.querySelector('a[href="#systemMenu"]');
 
       if (!systemMenu || !systemToggle) return;
 
-      // 1) 根据 localStorage 恢复初始展开状态（localStorage 优先覆盖服务器渲染）
+      // 优先使用服务器端渲染的状态（若服务器已在 path 中判断并添加 show）
+      // 如果 localStorage 明确存在用户偏好，则使用 localStorage 来覆盖初始展开/收起
       const saved = localStorage.getItem('systemMenuOpen');
       if (saved === 'true') {
-        systemMenu.classList.add('show');
+        if (!systemMenu.classList.contains('show')) {
+          systemMenu.classList.add('show');
+        }
         systemToggle.setAttribute('aria-expanded', 'true');
       } else if (saved === 'false') {
         systemMenu.classList.remove('show');
         systemToggle.setAttribute('aria-expanded', 'false');
       }
-
-      // 2) 监听 collapse 的 show/hide 来同步 localStorage（用户手动点击折叠切换时仍然有效）
+      // 监听 Bootstrap 折叠事件，保存状态
       systemMenu.addEventListener('show.bs.collapse', function(){
         localStorage.setItem('systemMenuOpen', 'true');
       });
@@ -474,31 +476,13 @@
         localStorage.setItem('systemMenuOpen', 'false');
       });
 
-      // 3) 对子菜单链接使用捕获阶段监听：在点击的最早阶段就保存为展开，并阻止事件冒泡到折叠控件
+      // 当点击子菜单链接时（导航到新页面），保存为展开状态，避免页面跳转后折叠
       const innerLinks = systemMenu.querySelectorAll('a.nav-link');
       innerLinks.forEach(link => {
-        link.addEventListener('click', function(evt){
-          try {
-            // 马上设置为展开，确保页面导航/跳转后仍保持展开
-            localStorage.setItem('systemMenuOpen', 'true');
-            // 阻止事件冒泡到上层（防止意外触发折叠组件的 hide/show）
-            evt.stopPropagation();
-            // 允许默认行为（即导航）继续发生
-          } catch (e) {
-            // 忍受错误，不阻断导航
-            console.error('systemMenu click handler error', e);
-          }
-        }, {capture: true});
-      });
-
-      // 4) 在页面卸载前再一次确保状态为展开（以防某些浏览器在快速跳转中未执行 click 捕获）
-      window.addEventListener('beforeunload', function(){
-        try {
-          // 如果当前 path 包含 /system 或当前 collapse 已展开，则保存为 true
-          if (location.pathname.indexOf('/system') !== -1 || systemMenu.classList.contains('show')) {
-            localStorage.setItem('systemMenuOpen', 'true');
-          }
-        } catch (e) {}
+        link.addEventListener('click', function(){
+          // 在导航前保存展开状态
+          localStorage.setItem('systemMenuOpen', 'true');
+        });
       });
     })();
   </script>
