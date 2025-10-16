@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 #
 # USE_TZ = True
 LANGUAGE_CODE = 'zh-hans'
-TIME_ZONE = 'Asia/shanghai'
+TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
 USE_TZ = True
 
