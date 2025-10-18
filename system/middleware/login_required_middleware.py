@@ -4,13 +4,13 @@ from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
 
 DEFAULT_WHITELIST_PREFIXES = [
-    '/static/',
-    '/media/',
-    '/admin/',
+    '/static',
+    '/media',
+    '/admin',
     '/favicon.ico',
-    '/login/',
-    '/logout/',
-    '/register/',
+    '/login',
+    '/logout',
+    '/register',
 ]
 
 class LoginRequiredMiddleware:
@@ -38,7 +38,8 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         path = request.path
-        print('current request path:', path)
+        print("current request path:", request.path)
+        print("user is authenticated:", request.user.is_authenticated)
         # ['/static/', '/media/', '/admin/', '/favicon.ico', '/login', '/logout', '/health/', '/api/public/']
         # 1) 如果路径以任何白名单前缀开始 => 放行
         # print('whitelist path:', self.whitelist)

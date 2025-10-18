@@ -27,8 +27,7 @@ SECRET_KEY = "django-insecure-30%dnr13-&r=tpbq&@4230zzu)4bgml4f4apy_x@4y=(09y-a7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['116.62.78.210', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 
@@ -148,8 +147,6 @@ AUTH_USER_MODEL = "system.User"
 # 登录/登出跳转
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "dashboard"
-
-# LOGIN_REDIRECT_URL = '/'  # 登录后跳转首页
 LOGOUT_REDIRECT_URL = '/login/'
 
 LOGIN_WHITELIST_NAMES = ['login', 'logout', 'register']

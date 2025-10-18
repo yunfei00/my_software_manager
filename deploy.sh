@@ -4,15 +4,15 @@
 # 项目目录: /opt/my_software_manager
 # ===========================================
 
-PROJECT_NAME="my_software_manager"
-PROJECT_DIR="/opt/${PROJECT_NAME}"
+PROJECT_NAME="container_management_system"
+PROJECT_DIR="/opt/my_software_manager"
 VENV_DIR="${PROJECT_DIR}/venv"
 SOCK_PATH="${PROJECT_DIR}/${PROJECT_NAME}.sock"
 
 echo ">>> 更新系统并安装依赖..."
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y python3 python3-venv python3-pip git nginx
-
+git clone https://github.com/yunfei00/my_software_manager
 echo ">>> 创建虚拟环境并安装依赖..."
 cd $PROJECT_DIR
 python3 -m venv venv
@@ -21,11 +21,13 @@ source venv/bin/activate
 pip install --upgrade pip
 if [ -f "requirements.txt" ]; then
     pip install -r requirements.txt
+    pip install gunicorn
 else
     pip install django gunicorn
 fi
 
 echo ">>> 执行数据库迁移和静态文件收集..."
+python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
 
@@ -66,8 +68,10 @@ server {
     }
 
     location / {
-        include proxy_params;
-        proxy_pass http://unix:${SOCK_PATH};
+    include proxy_params;
+    proxy_set_header Host $host;
+    proxy_pass http://unix:/opt/my_software_manager/container_management_system.sock;
+}
     }
 }
 EOF
