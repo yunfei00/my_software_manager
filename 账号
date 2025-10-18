@@ -6,3 +6,8 @@ python manage.py init_data
 超级管理员 管理方 业务方 运维 承建方
 开发用户已创建：user / 123456  超级管理员
 运维用户已创建：李四 / 123456
+
+
+
+服务器超级管理员:
+yunfei yunfei

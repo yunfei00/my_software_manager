@@ -16,8 +16,13 @@
   </div>
   <div class="col-auto">
     <button class="btn btn-primary">搜索</button>
+
+
     <a class="btn btn-success" href="?{% if request.GET.name %}name={{ request.GET.name }}&{% endif %}{% if request.GET.key %}key={{ request.GET.key }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}export=1">导出</a>
   </div>
+  <div class="col-auto">
+  <button type="button" class="btn btn-danger" onclick="deleteSelected()">批量删除</button>
+</div>
   <div class="col-auto ms-auto text-end">
     <button type="button" class="btn btn-outline-primary" onclick="openModal('{% url 'system:role_create' %}', '新增角色')">新增</button>
   </div>

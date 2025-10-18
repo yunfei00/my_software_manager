@@ -76,3 +76,76 @@ class UserApplication(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_status_display()})"
+
+class Tool(BaseModel):
+    """检测工具管理"""
+    name = models.CharField(max_length=100, verbose_name="工具名称")
+    api_url = models.URLField(verbose_name="API接口地址")
+    description = models.TextField(blank=True, null=True, verbose_name="说明")
+
+    class Meta:
+        verbose_name = "检测工具管理"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+class LoginLog(models.Model):
+    """登录日志"""
+    username = models.CharField(max_length=50, verbose_name="用户名")
+    ip = models.GenericIPAddressField(verbose_name="登录IP")
+    status = models.CharField(max_length=10, choices=[("成功", "成功"), ("失败", "失败")], verbose_name="状态")
+    time = models.DateTimeField(auto_now_add=True, verbose_name="时间")
+
+    class Meta:
+        verbose_name = "登录日志"
+        verbose_name_plural = verbose_name
+
+class OperationLog(models.Model):
+    """操作日志"""
+    module = models.CharField(max_length=100, verbose_name="系统模块")
+    operator = models.CharField(max_length=50, verbose_name="操作人员")
+    ip = models.GenericIPAddressField(verbose_name="操作IP")
+    action = models.CharField(max_length=100, verbose_name="操作内容")
+    time = models.DateTimeField(auto_now_add=True, verbose_name="时间")
+
+    class Meta:
+        verbose_name = "操作日志"
+        verbose_name_plural = verbose_name
+
+class Menu(BaseModel):
+    """菜单管理"""
+    name = models.CharField(max_length=100, verbose_name="菜单名称")
+    path = models.CharField(max_length=200, verbose_name="路径")
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="上级菜单")
+
+    class Meta:
+        verbose_name = "菜单管理"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+class Post(BaseModel):
+    """岗位管理"""
+    name = models.CharField(max_length=100, verbose_name="岗位名称")
+    code = models.CharField(max_length=50, verbose_name="岗位编码")
+
+    class Meta:
+        verbose_name = "岗位管理"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+class WorkflowConfig(BaseModel):
+    """审批流程配置"""
+    name = models.CharField(max_length=100, verbose_name="流程名称")
+    steps = models.TextField(verbose_name="流程步骤（JSON）")
+
+    class Meta:
+        verbose_name = "审批流程配置"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name

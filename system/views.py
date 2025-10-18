@@ -10,9 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from .models import Department, User, Role, DictItem
-from .forms import DeptForm, UserForm, RoleForm, DictForm
+from .forms import DeptForm, UserForm, RoleForm, DictForm, Tool, LoginLog, OperationLog, Menu, Post, WorkflowConfig
 from .filters import DepartmentFilter, UserFilter, RoleFilter, DictFilter
 from .utils import export_queryset_to_excel
+from .forms import ToolForm, MenuForm, PostForm, WorkflowConfigForm
 
 # ---------- Generic helpers to handle modal form (AJAX) ----------
 def render_modal_form(request, form, template='system/includes/modal_form.html', context_extra=None):
@@ -239,3 +240,199 @@ def dashboard(request):
     is_admin = user_role == '超级管理员'
     return render(request, "system/accounts/dashboard.html",
                   {"user_role": user_role, 'is_admin': is_admin})
+
+
+# ---------- 检测工具管理 ----------
+class ToolListView(View):
+    def get(self, request):
+        qs = Tool.objects.all().order_by('-id')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('id', 'ID'), ('name', '工具名称'), ('api_url', '接口地址'), ('description', '说明'), ('status', '状态')]
+            return export_queryset_to_excel(qs, cols, 'tools')
+        return render(request, 'system/tool_list.html', {'page_obj': objs})
+
+class ToolCreateView(View):
+    def get(self, request):
+        return render_modal_form(request, ToolForm())
+
+    def post(self, request):
+        form = ToolForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form)
+
+class ToolUpdateView(View):
+    def get(self, request, pk):
+        obj = get_object_or_404(Tool, pk=pk)
+        return render_modal_form(request, ToolForm(instance=obj), context_extra={'obj': obj})
+
+    def post(self, request, pk):
+        obj = get_object_or_404(Tool, pk=pk)
+        form = ToolForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form, context_extra={'obj': obj})
+
+class ToolDeleteView(DeleteView):
+    model = Tool
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({'success': True})
+
+
+# ---------- 登录日志 ----------
+class LoginLogListView(View):
+    def get(self, request):
+        qs = LoginLog.objects.all().order_by('-time')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('username', '用户名'), ('ip', 'IP'), ('status', '状态'), ('time', '时间')]
+            return export_queryset_to_excel(qs, cols, 'login_logs')
+        return render(request, 'system/loginlog_list.html', {'page_obj': objs})
+
+
+# ---------- 操作日志 ----------
+class OperationLogListView(View):
+    def get(self, request):
+        qs = OperationLog.objects.all().order_by('-time')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('module', '系统模块'), ('operator', '操作人员'), ('ip', 'IP'), ('action', '操作内容'), ('time', '时间')]
+            return export_queryset_to_excel(qs, cols, 'operation_logs')
+        return render(request, 'system/operationlog_list.html', {'page_obj': objs})
+
+
+# ---------- 菜单管理 ----------
+class MenuListView(View):
+    def get(self, request):
+        qs = Menu.objects.all().order_by('-id')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('id', 'ID'), ('name', '菜单名称'), ('path', '路径'), ('parent', '上级菜单'), ('status', '状态')]
+            return export_queryset_to_excel(qs, cols, 'menus')
+        return render(request, 'system/menu_list.html', {'page_obj': objs})
+
+class MenuCreateView(View):
+    def get(self, request):
+        return render_modal_form(request, MenuForm())
+
+    def post(self, request):
+        form = MenuForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form)
+
+class MenuUpdateView(View):
+    def get(self, request, pk):
+        obj = get_object_or_404(Menu, pk=pk)
+        return render_modal_form(request, MenuForm(instance=obj), context_extra={'obj': obj})
+
+    def post(self, request, pk):
+        obj = get_object_or_404(Menu, pk=pk)
+        form = MenuForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form, context_extra={'obj': obj})
+
+class MenuDeleteView(DeleteView):
+    model = Menu
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({'success': True})
+
+
+# ---------- 岗位管理 ----------
+class PostListView(View):
+    def get(self, request):
+        qs = Post.objects.all().order_by('-id')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('id', 'ID'), ('name', '岗位名称'), ('code', '岗位编码'), ('status', '状态')]
+            return export_queryset_to_excel(qs, cols, 'posts')
+        return render(request, 'system/post_list.html', {'page_obj': objs})
+
+class PostCreateView(View):
+    def get(self, request):
+        return render_modal_form(request, PostForm())
+
+    def post(self, request):
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form)
+
+class PostUpdateView(View):
+    def get(self, request, pk):
+        obj = get_object_or_404(Post, pk=pk)
+        return render_modal_form(request, PostForm(instance=obj), context_extra={'obj': obj})
+
+    def post(self, request, pk):
+        obj = get_object_or_404(Post, pk=pk)
+        form = PostForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form, context_extra={'obj': obj})
+
+class PostDeleteView(DeleteView):
+    model = Post
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({'success': True})
+
+
+# ---------- 审批流程配置 ----------
+class WorkflowListView(View):
+    def get(self, request):
+        qs = WorkflowConfig.objects.all().order_by('-id')
+        paginator = Paginator(qs, 10)
+        objs = paginator.get_page(request.GET.get('page'))
+        if 'export' in request.GET:
+            cols = [('id', 'ID'), ('name', '流程名称'), ('steps', '流程步骤'), ('status', '状态')]
+            return export_queryset_to_excel(qs, cols, 'workflows')
+        return render(request, 'system/workflow_list.html', {'page_obj': objs})
+
+class WorkflowCreateView(View):
+    def get(self, request):
+        return render_modal_form(request, WorkflowConfigForm())
+
+    def post(self, request):
+        form = WorkflowConfigForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form)
+
+class WorkflowUpdateView(View):
+    def get(self, request, pk):
+        obj = get_object_or_404(WorkflowConfig, pk=pk)
+        return render_modal_form(request, WorkflowConfigForm(instance=obj), context_extra={'obj': obj})
+
+    def post(self, request, pk):
+        obj = get_object_or_404(WorkflowConfig, pk=pk)
+        form = WorkflowConfigForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        return render_modal_form(request, form, context_extra={'obj': obj})
+
+class WorkflowDeleteView(DeleteView):
+    model = WorkflowConfig
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({'success': True})

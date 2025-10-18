@@ -297,6 +297,53 @@
         <a class="nav-link {% if request.resolver_match.url_name == 'dict_list' %}active{% endif %}"
            href="{% url 'system:dict_list' %}"><i class="bi bi-book me-2"></i>字典管理</a>
       </li>
+    <!-- 检测工具管理 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'tool_list' %}active{% endif %}"
+       href="{% url 'system:tool_list' %}">
+      <i class="bi bi-tools me-2"></i>检测工具管理
+    </a>
+  </li>
+
+  <!-- 登录日志 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'loginlog_list' %}active{% endif %}"
+       href="{% url 'system:loginlog_list' %}">
+      <i class="bi bi-door-open me-2"></i>登录日志
+    </a>
+  </li>
+
+  <!-- 操作日志 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'operationlog_list' %}active{% endif %}"
+       href="{% url 'system:operationlog_list' %}">
+      <i class="bi bi-journal-text me-2"></i>操作日志
+    </a>
+  </li>
+
+  <!-- 菜单管理 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'menu_list' %}active{% endif %}"
+       href="{% url 'system:menu_list' %}">
+      <i class="bi bi-menu-button-wide me-2"></i>菜单管理
+    </a>
+  </li>
+
+  <!-- 岗位管理 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}"
+       href="{% url 'system:post_list' %}">
+      <i class="bi bi-person-badge me-2"></i>岗位管理
+    </a>
+  </li>
+
+  <!-- 审批流程配置 -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'workflow_list' %}active{% endif %}"
+       href="{% url 'system:workflow_list' %}">
+      <i class="bi bi-diagram-2 me-2"></i>审批流程配置
+    </a>
+  </li>
     </ul>
   </div>
 </li>
