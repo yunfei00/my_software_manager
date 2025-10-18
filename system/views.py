@@ -8,12 +8,28 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from rest_framework import viewsets
 
 from .models import Department, User, Role, DictItem
 from .forms import DeptForm, UserForm, RoleForm, DictForm, Tool, LoginLog, OperationLog, Menu, Post, WorkflowConfig
 from .filters import DepartmentFilter, UserFilter, RoleFilter, DictFilter
 from .utils import export_queryset_to_excel
 from .forms import ToolForm, MenuForm, PostForm, WorkflowConfigForm
+
+from .serializers import DepartmentSerializer, RoleSerializer, UserSerializer
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all().order_by('-create_time')
+    serializer_class = DepartmentSerializer
+
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
 
 # ---------- Generic helpers to handle modal form (AJAX) ----------
 def render_modal_form(request, form, template='system/includes/modal_form.html', context_extra=None):

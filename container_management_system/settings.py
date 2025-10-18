@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "projects.apps.ProjectsConfig",
     "detection.apps.DetectionConfig",
     "repo.apps.RepoConfig",
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

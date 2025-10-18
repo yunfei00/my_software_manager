@@ -19,6 +19,26 @@ from django.contrib import admin
 from django.urls import path, include
 
 
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import routers
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+from system.views import DepartmentViewSet, RoleViewSet, UserViewSet
+# from registry.views import ImageViewSet
+# from scanner.views import ScanToolViewSet, PreScanViewSet
+# from apps.repository.views import RepoViewSet
+
+router = routers.DefaultRouter()
+router.register('departments', DepartmentViewSet)
+router.register('roles', RoleViewSet)
+router.register('users', UserViewSet)
+# router.register('images', ImageViewSet)
+# router.register('scan-tools', ScanToolViewSet)
+# router.register('pre-scans', PreScanViewSet)
+# router.register('repos', RepoViewSet)
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('system.urls', namespace='system')),
@@ -26,4 +46,8 @@ urlpatterns = [
     path("projects/", include("projects.urls")),
     path("detection/", include("detection.urls")),
     path("repo/", include("repo.urls")),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+    path('api/', include(router.urls)),
 ]
